@@ -1,0 +1,27 @@
+{
+  "name": "mikroktic-manager",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Enterprise AI-powered MikroTik Network Management Platform.",
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "dev": "corepack pnpm@9.15.4 --parallel --filter @mikroktic-manager/web --filter @mikroktic-manager/api dev",
+    "dev:web": "corepack pnpm@9.15.4 --filter @mikroktic-manager/web dev",
+    "dev:api": "corepack pnpm@9.15.4 --filter @mikroktic-manager/api start:dev",
+    "dev:worker": "corepack pnpm@9.15.4 --filter @mikroktic-manager/worker dev",
+    "build": "corepack pnpm@9.15.4 -r build",
+    "lint": "corepack pnpm@9.15.4 -r lint",
+    "test": "corepack pnpm@9.15.4 -r test && tsx --test tests/**/*.test.ts",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md,css,yml,yaml}\""
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

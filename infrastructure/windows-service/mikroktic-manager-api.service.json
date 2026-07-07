@@ -1,0 +1,12 @@
+{
+  "name": "mikroktic-manager-api",
+  "description": "mikroktic-manager NestJS API service behind IIS reverse proxy.",
+  "cwd": "apps/api",
+  "script": "dist/main.js",
+  "env": {
+    "NODE_ENV": "production",
+    "PORT": "4000",
+    "DATABASE_URL": "sqlserver://localhost:1433;database=DLE_Mikrotik;user=sa;password=DLE19@ent49.c0m;encrypt=true;trustServerCertificate=true",
+    "REDIS_URL": "redis://localhost:6379"
+  }
+}

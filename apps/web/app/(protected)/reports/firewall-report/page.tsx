@@ -1,0 +1,5 @@
+import { EnterprisePage } from "@/components/dashboard/enterprise-page";
+
+export default function Page() {
+  return <EnterprisePage route="/reports/firewall-report" />;
+}

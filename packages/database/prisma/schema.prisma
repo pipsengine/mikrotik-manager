@@ -1,0 +1,225 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  sites     Site[]
+  users     User[]
+  routers   Router[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Site {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  name           String
+  location       String?
+  routers        Router[]
+}
+
+model User {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  email          String       @unique
+  displayName    String
+  passwordHash   String
+  mfaEnabled     Boolean      @default(false)
+  passwordExpiry DateTime?
+  lockedUntil    DateTime?
+  failedLogins   Int          @default(0)
+  roles          UserRole[]
+  sessions       Session[]
+  loginHistory   LoginHistory[]
+  approvals      Approval[]
+  auditLogs      AuditLog[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Role {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  permissions RolePermission[]
+  users       UserRole[]
+}
+
+model Permission {
+  id    String           @id @default(uuid())
+  key   String           @unique
+  roles RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+}
+
+model UserRole {
+  userId String
+  roleId String
+  user   User   @relation(fields: [userId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  refreshHash  String
+  device       String?
+  ipAddress    String?
+  userAgent    String?
+  expiresAt    DateTime
+  revokedAt    DateTime?
+  createdAt    DateTime @default(now())
+}
+
+model LoginHistory {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  ipAddress String?
+  device    String?
+  success   Boolean
+  reason    String?
+  createdAt DateTime @default(now())
+}
+
+model Router {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  siteId         String?
+  site           Site?        @relation(fields: [siteId], references: [id])
+  name           String
+  host           String
+  apiPort        Int          @default(8728)
+  restPort       Int          @default(443)
+  sshPort        Int          @default(22)
+  model          String?
+  serialNumber   String?
+  license        String?
+  routerOs       String?
+  status         String       @default("Unknown")
+  healthScore    Int          @default(0)
+  credentials    Secret[]
+  backups        Backup[]
+  changes        ChangeRequest[]
+  metrics        MonitoringMetric[]
+  auditLogs      AuditLog[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Secret {
+  id        String   @id @default(uuid())
+  routerId  String?
+  router    Router?  @relation(fields: [routerId], references: [id])
+  name      String
+  cipher    String
+  keyRef    String
+  createdAt DateTime @default(now())
+}
+
+model Backup {
+  id        String   @id @default(uuid())
+  routerId  String
+  router    Router   @relation(fields: [routerId], references: [id])
+  type      String
+  path      String
+  checksum  String
+  encrypted Boolean  @default(true)
+  version   String
+  createdAt DateTime @default(now())
+}
+
+model ChangeRequest {
+  id            String      @id @default(uuid())
+  routerId      String
+  router        Router      @relation(fields: [routerId], references: [id])
+  title         String
+  description   String
+  risk          String
+  status        String      @default("Draft")
+  beforeState   String?     @db.NVarChar(Max)
+  afterPlan     String?     @db.NVarChar(Max)
+  approvals     Approval[]
+  executions    Execution[]
+  aiActivities  AiActivity[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Approval {
+  id              String        @id @default(uuid())
+  changeRequestId String
+  changeRequest   ChangeRequest @relation(fields: [changeRequestId], references: [id])
+  approverId      String
+  approver        User          @relation(fields: [approverId], references: [id])
+  decision        String
+  notes           String?
+  createdAt       DateTime      @default(now())
+}
+
+model Execution {
+  id              String        @id @default(uuid())
+  changeRequestId String
+  changeRequest   ChangeRequest @relation(fields: [changeRequestId], references: [id])
+  status          String
+  transcript      String?       @db.NVarChar(Max)
+  validation      String?       @db.NVarChar(Max)
+  rollbackPoint   String?
+  createdAt       DateTime      @default(now())
+}
+
+model AiActivity {
+  id              String         @id @default(uuid())
+  changeRequestId String?
+  changeRequest   ChangeRequest? @relation(fields: [changeRequestId], references: [id])
+  agent           String
+  prompt          String         @db.NVarChar(Max)
+  result          String         @db.NVarChar(Max)
+  risk            String?
+  createdAt       DateTime       @default(now())
+}
+
+model MonitoringMetric {
+  id        String   @id @default(uuid())
+  routerId  String
+  router    Router   @relation(fields: [routerId], references: [id])
+  name      String
+  value     Float
+  unit      String
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  routerId  String?
+  router    Router?  @relation(fields: [routerId], references: [id])
+  action    String
+  entity    String
+  before    String?  @db.NVarChar(Max)
+  after     String?  @db.NVarChar(Max)
+  ipAddress String?
+  device    String?
+  createdAt DateTime @default(now())
+}
