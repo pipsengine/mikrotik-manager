@@ -20,7 +20,7 @@ model Organization {
 model Site {
   id             String       @id @default(uuid())
   organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   name           String
   location       String?
   routers        Router[]
@@ -106,7 +106,7 @@ model Router {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
   siteId         String?
-  site           Site?        @relation(fields: [siteId], references: [id])
+  site           Site?        @relation(fields: [siteId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   name           String
   host           String
   apiPort        Int          @default(8728)
@@ -147,6 +147,8 @@ model Backup {
   encrypted Boolean  @default(true)
   version   String
   createdAt DateTime @default(now())
+
+  @@map("backup_snapshots")
 }
 
 model ChangeRequest {
@@ -164,17 +166,21 @@ model ChangeRequest {
   aiActivities  AiActivity[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+
+  @@map("change_requests")
 }
 
 model Approval {
   id              String        @id @default(uuid())
   changeRequestId String
-  changeRequest   ChangeRequest @relation(fields: [changeRequestId], references: [id])
+  changeRequest   ChangeRequest @relation(fields: [changeRequestId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   approverId      String
-  approver        User          @relation(fields: [approverId], references: [id])
+  approver        User          @relation(fields: [approverId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   decision        String
   notes           String?
   createdAt       DateTime      @default(now())
+
+  @@map("approvals")
 }
 
 model Execution {
@@ -212,9 +218,9 @@ model MonitoringMetric {
 model AuditLog {
   id        String   @id @default(uuid())
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   routerId  String?
-  router    Router?  @relation(fields: [routerId], references: [id])
+  router    Router?  @relation(fields: [routerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   action    String
   entity    String
   before    String?  @db.NVarChar(Max)
@@ -222,4 +228,584 @@ model AuditLog {
   ipAddress String?
   device    String?
   createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+model NetworkDevice {
+  id            String   @id @default(uuid())
+  routerId      String?
+  deviceName    String
+  hostname      String?
+  ipAddress     String
+  macAddress    String
+  loggedInUser  String?
+  department    String?
+  interfaceName String?
+  vlan          String?
+  siteLocation  String?
+  deviceType    String?
+  operatingSystem String?
+  status        String
+  uptime        String?
+  lastSeen      DateTime?
+  riskScore     Int      @default(0)
+  currentPolicy String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([macAddress])
+  @@map("devices")
+}
+
+model DeviceSession {
+  id        String   @id @default(uuid())
+  deviceId  String
+  userId    String?
+  ipAddress String
+  macAddress String
+  startedAt DateTime @default(now())
+  endedAt   DateTime?
+  routerSite String?
+
+  @@map("device_sessions")
+}
+
+model DeviceUser {
+  id          String   @id @default(uuid())
+  displayName String
+  username    String?
+  department  String?
+  email       String?
+  createdAt   DateTime @default(now())
+
+  @@map("device_users")
+}
+
+model DeviceGroup {
+  id          String   @id @default(uuid())
+  name        String
+  department  String?
+  description String?
+  createdAt   DateTime @default(now())
+
+  @@map("device_groups")
+}
+
+model DeviceBandwidthUsage {
+  id        String   @id @default(uuid())
+  deviceId  String
+  userId    String?
+  department String?
+  site      String?
+  interfaceName String?
+  vlan      String?
+  downloadBytes BigInt @default(0)
+  uploadBytes   BigInt @default(0)
+  sampledAt DateTime @default(now())
+
+  @@map("device_bandwidth_usage")
+}
+
+model DeviceActivityLog {
+  id        String   @id @default(uuid())
+  deviceId  String
+  action    String
+  category  String?
+  allowed   Boolean
+  policyApplied String?
+  createdAt DateTime @default(now())
+
+  @@map("device_activity_logs")
+}
+
+model VisitedDomain {
+  id        String   @id @default(uuid())
+  deviceId  String?
+  userId    String?
+  domain    String
+  category  String?
+  dataBytes BigInt   @default(0)
+  visitedAt DateTime @default(now())
+
+  @@map("visited_domains")
+}
+
+model BlockedDomain {
+  id        String   @id @default(uuid())
+  domain    String
+  category  String?
+  reason    String?
+  source    String?
+  createdAt DateTime @default(now())
+
+  @@map("blocked_domains")
+}
+
+model ApplicationCategory {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  domains     String?  @db.NVarChar(Max)
+  riskLevel   String?
+  createdAt   DateTime @default(now())
+
+  @@map("application_categories")
+}
+
+model AccessPolicy {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  bandwidthLimit String?
+  approvalRequired Boolean @default(false)
+  priority    Int      @default(100)
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("access_policies")
+}
+
+model PolicyRule {
+  id        String   @id @default(uuid())
+  policyId  String
+  type      String
+  matcher   String
+  action    String
+  scheduleId String?
+  createdAt DateTime @default(now())
+
+  @@map("policy_rules")
+}
+
+model PolicySchedule {
+  id        String   @id @default(uuid())
+  name      String
+  scheduleType String
+  startsAt  String
+  endsAt    String
+  timezone  String?
+  daysOfWeek String?
+  holidayOverride Boolean @default(false)
+  emergencyOverride Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("policy_schedules")
+}
+
+model PolicyAssignment {
+  id        String   @id @default(uuid())
+  policyId  String
+  targetType String
+  targetId   String
+  assignedBy String?
+  createdAt DateTime @default(now())
+
+  @@map("policy_assignments")
+}
+
+model SpecialAccessDevice {
+  id        String   @id @default(uuid())
+  deviceId  String
+  reason    String
+  scope     String?
+  approverId String?
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@map("special_access_devices")
+}
+
+model BandwidthLimit {
+  id        String   @id @default(uuid())
+  targetType String
+  targetId   String
+  uploadLimit String?
+  downloadLimit String?
+  burstLimit String?
+  priorityLevel Int?
+  scheduleId String?
+  queueType String?
+  createdAt DateTime @default(now())
+
+  @@map("bandwidth_limits")
+}
+
+model NetworkFirewallRule {
+  id        String   @id @default(uuid())
+  routerId  String?
+  chain     String
+  action    String
+  matcher   String?  @db.NVarChar(Max)
+  enabled   Boolean  @default(true)
+  priority  Int      @default(100)
+  comment   String?
+  riskRating String?
+  aiRecommendation String? @db.NVarChar(Max)
+  createdAt DateTime @default(now())
+
+  @@map("firewall_rules")
+}
+
+model FirewallRuleChange {
+  id        String   @id @default(uuid())
+  firewallRuleId String?
+  changeRequestId String?
+  before    String?  @db.NVarChar(Max)
+  after     String?  @db.NVarChar(Max)
+  backupSnapshotId String?
+  approvalId String?
+  createdAt DateTime @default(now())
+
+  @@map("firewall_rule_changes")
+}
+
+model MikrotikAddressList {
+  id        String   @id @default(uuid())
+  routerId  String?
+  listName  String
+  address   String
+  comment   String?
+  timeout   String?
+  createdAt DateTime @default(now())
+
+  @@map("mikrotik_address_lists")
+}
+
+model MikrotikQueueRule {
+  id        String   @id @default(uuid())
+  routerId  String?
+  queueType String
+  target    String
+  uploadLimit String?
+  downloadLimit String?
+  priority  Int?
+  enabled   Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("mikrotik_queue_rules")
+}
+
+model DnsLog {
+  id        String   @id @default(uuid())
+  deviceId  String?
+  sourceIp  String
+  domain    String
+  response  String?
+  allowed   Boolean
+  loggedAt  DateTime @default(now())
+
+  @@map("dns_logs")
+}
+
+model BlockedAttempt {
+  id        String   @id @default(uuid())
+  deviceId  String?
+  userId    String?
+  domainOrApp String
+  category  String?
+  policyId  String?
+  routerSite String?
+  interfaceName String?
+  vlan      String?
+  attemptedAt DateTime @default(now())
+
+  @@map("blocked_attempts")
+}
+
+model UserActivityLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  deviceId  String?
+  ipAddress String?
+  macAddress String?
+  visitedDomain String?
+  category  String?
+  dataConsumed BigInt @default(0)
+  allowed   Boolean
+  policyApplied String?
+  routerSite String?
+  interfaceName String?
+  vlan      String?
+  createdAt DateTime @default(now())
+
+  @@map("user_activity_logs")
+}
+
+model NetworkAsset {
+  id          String   @id @default(uuid())
+  assetType   String
+  identity    String
+  owner       String?
+  department  String?
+  assetTag    String?
+  serialNumber String?
+  vendor      String?
+  model       String?
+  firmware    String?
+  ipAddress   String?
+  macAddress  String?
+  vlan        String?
+  interfaceName String?
+  site        String?
+  building    String?
+  floor       String?
+  rack        String?
+  status      String
+  warranty    String?
+  lifecycle   String?
+  notes       String? @db.NVarChar(Max)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("network_assets")
+}
+
+model NetworkTopologyNode {
+  id        String   @id @default(uuid())
+  nodeType  String
+  label     String
+  parentId  String?
+  health    String?
+  x         Float?
+  y         Float?
+  metadata  String?  @db.NVarChar(Max)
+  updatedAt DateTime @updatedAt
+
+  @@map("network_topology_nodes")
+}
+
+model NetworkTopologyLink {
+  id        String   @id @default(uuid())
+  sourceId  String
+  targetId  String
+  interfaceName String?
+  linkStatus String
+  linkSpeed  String?
+  vlan       String?
+  updatedAt DateTime @updatedAt
+
+  @@map("network_topology_links")
+}
+
+model IdentityNetworkPolicy {
+  id          String   @id @default(uuid())
+  employeeId  String?
+  department  String?
+  role        String?
+  deviceId    String?
+  policyId    String
+  bandwidth   String?
+  applications String? @db.NVarChar(Max)
+  webAccess   String? @db.NVarChar(Max)
+  scheduleId  String?
+  createdAt   DateTime @default(now())
+
+  @@map("identity_network_policies")
+}
+
+model PolicyTemplate {
+  id        String   @id @default(uuid())
+  name      String
+  category  String
+  firewallRules String? @db.NVarChar(Max)
+  websiteAccess String? @db.NVarChar(Max)
+  applicationAccess String? @db.NVarChar(Max)
+  bandwidthLimits String?
+  timeSchedule String?
+  qos       String?
+  dnsPolicy String?
+  vlanAssignment String?
+  logging   Boolean @default(true)
+  approvalRequired Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("policy_templates")
+}
+
+model AiRecommendation {
+  id          String   @id @default(uuid())
+  category    String
+  title       String
+  rationale   String   @db.NVarChar(Max)
+  confidence  Float
+  risk        String
+  approvalRequired Boolean @default(true)
+  status      String   @default("Pending Review")
+  createdAt   DateTime @default(now())
+
+  @@map("ai_recommendations")
+}
+
+model ComplianceSnapshot {
+  id        String   @id @default(uuid())
+  securityScore Int
+  configurationCompliance Int
+  passwordPolicyCompliance Int
+  backupCompliance Int
+  firewallCompliance Int
+  firmwareCompliance Int
+  vlanCompliance Int
+  vpnCompliance Int
+  changeManagementCompliance Int
+  auditCompleteness Int
+  createdAt DateTime @default(now())
+
+  @@map("compliance_snapshots")
+}
+
+model PredictiveForecast {
+  id        String   @id @default(uuid())
+  forecastType String
+  target    String
+  confidence Float
+  predictedAt DateTime
+  recommendedAction String? @db.NVarChar(Max)
+  createdAt DateTime @default(now())
+
+  @@map("predictive_forecasts")
+}
+
+model ConfigurationDriftRecord {
+  id        String   @id @default(uuid())
+  targetType String
+  targetId   String
+  expectedConfiguration String @db.NVarChar(Max)
+  currentConfiguration  String @db.NVarChar(Max)
+  differences String @db.NVarChar(Max)
+  risk      String
+  recommendation String? @db.NVarChar(Max)
+  remediationPlan String? @db.NVarChar(Max)
+  detectedAt DateTime @default(now())
+
+  @@map("configuration_drift_records")
+}
+
+model RiskAssessment {
+  id        String   @id @default(uuid())
+  changeType String
+  target    String
+  riskLevel String
+  score     Int
+  approvalThreshold String?
+  rationale String? @db.NVarChar(Max)
+  createdAt DateTime @default(now())
+
+  @@map("risk_assessments")
+}
+
+model ChangeSimulationReport {
+  id        String   @id @default(uuid())
+  changeRequestId String?
+  conflicts String? @db.NVarChar(Max)
+  impactedDevices String? @db.NVarChar(Max)
+  impactedServices String? @db.NVarChar(Max)
+  estimatedDowntime String?
+  dependencies String? @db.NVarChar(Max)
+  rollbackComplexity String?
+  createdAt DateTime @default(now())
+
+  @@map("change_simulation_reports")
+}
+
+model InternetQualityMetric {
+  id        String   @id @default(uuid())
+  siteId    String?
+  latencyMs Float
+  jitterMs  Float
+  packetLossPercent Float
+  dnsResponseMs Float
+  gatewayAvailable Boolean
+  wanStability String
+  ispUptimePercent Float
+  linkQuality String
+  sampledAt DateTime @default(now())
+
+  @@map("internet_quality_metrics")
+}
+
+model WifiAnalyticsMetric {
+  id        String   @id @default(uuid())
+  accessPointId String?
+  clientCount Int
+  signalStrength String?
+  roamingEvents Int @default(0)
+  channelUtilization Float?
+  retryRate Float?
+  airtimeUtilization Float?
+  rogueApDetected Boolean @default(false)
+  coverageQuality String?
+  sampledAt DateTime @default(now())
+
+  @@map("wifi_analytics_metrics")
+}
+
+model ApprovalWorkspaceRecord {
+  id        String   @id @default(uuid())
+  changeRequestId String?
+  currentConfiguration String? @db.NVarChar(Max)
+  proposedConfiguration String? @db.NVarChar(Max)
+  diff String? @db.NVarChar(Max)
+  riskScore Int?
+  impactAnalysis String? @db.NVarChar(Max)
+  simulationResults String? @db.NVarChar(Max)
+  rollbackPlan String? @db.NVarChar(Max)
+  aiRationale String? @db.NVarChar(Max)
+  reviewerComments String? @db.NVarChar(Max)
+  createdAt DateTime @default(now())
+
+  @@map("approval_workspace_records")
+}
+
+model AutomationRecipe {
+  id        String   @id @default(uuid())
+  name      String
+  description String?
+  schedule  String?
+  conditions String? @db.NVarChar(Max)
+  approvalRequired Boolean @default(false)
+  enabled   Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("automation_recipes")
+}
+
+model SiteHierarchyNode {
+  id        String   @id @default(uuid())
+  nodeType  String
+  name      String
+  parentId  String?
+  inheritedPolicy String?
+  overridePolicy String?
+  createdAt DateTime @default(now())
+
+  @@map("site_hierarchy_nodes")
+}
+
+model PluginRegistryEntry {
+  id        String   @id @default(uuid())
+  name      String
+  pluginType String
+  version   String
+  isolated  Boolean @default(true)
+  enabled   Boolean @default(false)
+  manifest  String? @db.NVarChar(Max)
+  createdAt DateTime @default(now())
+
+  @@map("plugin_registry_entries")
+}
+
+model EnterpriseIntegration {
+  id        String   @id @default(uuid())
+  name      String
+  integrationType String
+  version   String
+  authMode  String
+  enabled   Boolean @default(false)
+  auditLogging Boolean @default(true)
+  config    String? @db.NVarChar(Max)
+  createdAt DateTime @default(now())
+
+  @@map("enterprise_integrations")
 }

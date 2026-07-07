@@ -3,10 +3,10 @@
   "description": "mikroktic-manager Next.js web service behind IIS reverse proxy.",
   "cwd": "apps/web",
   "script": "node_modules/next/dist/bin/next",
-  "args": "start --port 3000",
+  "args": "start --port 3026",
   "env": {
     "NODE_ENV": "production",
-    "PORT": "3000",
+    "PORT": "3026",
     "APP_URL": "https://localhost:2026",
     "API_URL": "https://localhost:2026/api"
   }

@@ -15,7 +15,7 @@ Runtime topology:
 
 - IIS terminates HTTPS on port `2026`.
 - IIS URL Rewrite proxies `/api/*` to the NestJS API on `http://localhost:4000/api/*`.
-- IIS URL Rewrite proxies all other requests to the Next.js web service on `http://localhost:3000`.
+- IIS URL Rewrite proxies all other requests to the Next.js web service on `http://127.0.0.1:3026`.
 - API and worker run as Windows Services.
 - Web may run as a Windows Service and remain private to IIS.
 
@@ -36,4 +36,4 @@ Checklist:
 - Start web, API and worker through Windows Service.
 - Point IIS at `infrastructure/iis/web.config`.
 - Bind the IIS site to HTTPS port `2026`.
-- Keep service ports `3000` and `4000` private to the server; expose only IIS port `2026` externally.
+- Keep service ports `3026` and `4000` private to the server; expose only IIS port `2026` externally.

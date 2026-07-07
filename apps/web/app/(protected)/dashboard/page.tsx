@@ -1,5 +1,5 @@
-import { EnterprisePage } from "@/components/dashboard/enterprise-page";
+import { AiNocPage } from "@/components/ai-noc/ai-noc-page";
 
 export default function Page() {
-  return <EnterprisePage route="/dashboard" />;
+  return <AiNocPage route="/dashboard" />;
 }

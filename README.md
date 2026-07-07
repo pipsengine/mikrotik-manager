@@ -15,6 +15,14 @@ The platform is designed as a Network Operations Center with secure RouterOS con
 - `packages/security-kit` - security policy helpers.
 - `docs` - architecture, deployment, security, AI workflow, and user documentation.
 
+## Network Control Center
+
+The Network Control Center module adds enterprise device access control, bandwidth governance, website/application/social-media restrictions, time-based access, special access devices, bulk actions, policy scheduling, activity logs and usage reports.
+
+## AI-NOC 2.0
+
+AI-NOC 2.0 adds a network operations center dashboard, digital twin, asset management, identity-based networking, policy templates, AI optimization, compliance, predictive analytics, drift detection, risk scoring, dry-run simulation, quality analytics, Wi-Fi analytics, approval workspace, automation recipes, multi-site hierarchy, plugin architecture and enterprise integration APIs.
+
 ## Requirements
 
 - Node.js LTS 22+

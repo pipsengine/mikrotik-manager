@@ -17,6 +17,8 @@ import { SecretsModule } from "./secrets/secrets.module";
 import { JobsModule } from "./jobs/jobs.module";
 import { QueuesModule } from "./queues/queues.module";
 import { TelemetryModule } from "./telemetry/telemetry.module";
+import { NetworkControlCenterModule } from "./network-control-center/network-control-center.module";
+import { AiNocModule } from "./ai-noc/ai-noc.module";
 
 @Module({
   imports: [
@@ -37,7 +39,9 @@ import { TelemetryModule } from "./telemetry/telemetry.module";
     SecretsModule,
     JobsModule,
     QueuesModule,
-    TelemetryModule
+    TelemetryModule,
+    NetworkControlCenterModule,
+    AiNocModule
   ]
 })
 export class AppModule {}

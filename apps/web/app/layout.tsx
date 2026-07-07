@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "mikroktic-manager",
+  title: {
+    default: "MikroTik Manager",
+    template: "%s | MikroTik Manager"
+  },
   description: "Enterprise AI-powered MikroTik Network Management Platform"
 };
 

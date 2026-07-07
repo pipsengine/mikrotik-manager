@@ -50,7 +50,33 @@ export const navigationGroups: NavigationGroup[] = [
     icon: "LayoutDashboard",
     route: "/dashboard",
     permission: "dashboard.view",
-    items: [item("dashboard", "Dashboard", "/dashboard", "dashboard.view", "LayoutDashboard", ["executive", "kpi", "health", "status"], "Executive KPIs, router status, pending changes, AI recommendations, backup and security posture.")]
+    items: [item("dashboard", "AI-NOC Dashboard", "/dashboard", "dashboard.view", "LayoutDashboard", ["ai-noc", "executive", "kpi", "availability", "incidents"], "Enterprise Network Operations Center with executive, operational and real-time AI-assisted KPIs.")]
+  },
+  {
+    title: "AI-NOC 2.0",
+    module: "ai-noc",
+    icon: "BrainCircuit",
+    permission: "aiNoc.view",
+    items: [
+      item("ai-noc", "Network Digital Twin", "/ai-noc/network-digital-twin", "aiNoc.digitalTwin.view", "Network", ["topology", "digital twin", "links", "vlan"], "Interactive topology from internet, ISP, firewall, router, switches, access points, servers, clients and unknown devices."),
+      item("ai-noc", "Network Assets", "/ai-noc/network-assets", "aiNoc.assets.manage", "Boxes", ["asset", "inventory", "lifecycle"], "Network asset management for laptops, servers, printers, APs, routers, switches, firewalls, IoT, UPS and unknown devices."),
+      item("ai-noc", "Identity Networking", "/ai-noc/identity-networking", "aiNoc.identity.manage", "UsersRound", ["identity", "employee", "role", "policy"], "Identity-based networking where user, department, role and device determine bandwidth, apps, web access and schedules."),
+      item("ai-noc", "Policy Templates", "/ai-noc/policy-templates", "aiNoc.templates.manage", "Library", ["template", "finance", "guest", "iot"], "Reusable policy templates for executive, finance, HR, IT, guest, contractor, server, CCTV, printer, VoIP, IoT and high-security networks."),
+      item("ai-noc", "AI Policy Optimizer", "/ai-noc/ai-policy-optimizer", "aiNoc.optimizer.view", "Sparkles", ["optimizer", "recommendation", "cleanup"], "AI recommendations for bandwidth, VLANs, firewall cleanup, NAT, DHCP, QoS, stale lists and overlapping policies."),
+      item("ai-noc", "Compliance Dashboard", "/ai-noc/compliance-dashboard", "aiNoc.compliance.view", "ClipboardCheck", ["compliance", "audit", "score"], "Continuous compliance for security, configuration, password policy, backup, firewall, firmware, VLAN, VPN and change management."),
+      item("ai-noc", "Predictive AI", "/ai-noc/predictive-ai", "aiNoc.predictive.view", "TrendingUp", ["forecast", "capacity", "expiry"], "Forecast WAN saturation, DHCP pool exhaustion, storage, certificate expiry, backup failures, CPU load and bandwidth spikes."),
+      item("ai-noc", "Configuration Drift", "/ai-noc/configuration-drift", "aiNoc.drift.view", "GitCompare", ["drift", "intended", "live"], "Compare intended and live configuration for firewall, NAT, VLANs, interfaces, routes, queues, DNS and DHCP drift."),
+      item("ai-noc", "Risk Engine", "/ai-noc/risk-engine", "aiNoc.risk.view", "ShieldAlert", ["risk", "threshold", "approval"], "Risk scoring and approval thresholds for every proposed network change."),
+      item("ai-noc", "Change Simulation", "/ai-noc/change-simulation", "aiNoc.simulation.view", "FlaskConical", ["dry run", "impact", "downtime"], "Dry-run change simulation with conflicts, impacted devices, services, downtime, dependencies and rollback complexity."),
+      item("ai-noc", "Internet Quality", "/ai-noc/internet-quality", "aiNoc.quality.view", "Activity", ["latency", "jitter", "packet loss", "sla"], "Latency, jitter, packet loss, DNS response, gateway availability, WAN stability, ISP uptime and SLA tracking."),
+      item("ai-noc", "Wi-Fi Analytics", "/ai-noc/wifi-analytics", "aiNoc.wifi.view", "Wifi", ["wireless", "signal", "roaming"], "Wireless client count, signal, roaming, channel use, retries, airtime, rogue APs, coverage and client experience."),
+      item("ai-noc", "Approval Workspace", "/ai-noc/approval-workspace", "aiNoc.approvals.manage", "PanelTopOpen", ["diff", "simulation", "rollback"], "Enterprise approval workspace with current/proposed configuration, diff, risk, impact, simulation, rollback and AI rationale."),
+      item("ai-noc", "Automation Library", "/ai-noc/automation-library", "aiNoc.automation.manage", "Workflow", ["recipes", "schedule", "conditions"], "Reusable automation recipes for backups, compliance, interface recovery, quarantine, social blocking, VPN restore and notifications."),
+      item("ai-noc", "Multi-Site Hierarchy", "/ai-noc/multi-site-hierarchy", "aiNoc.sites.manage", "Map", ["organization", "region", "site", "rack"], "Organization, region, country, site, building, floor, rack, network, router and interface hierarchy with inheritance."),
+      item("ai-noc", "Executive Dashboard", "/ai-noc/executive-dashboard", "aiNoc.executive.view", "BriefcaseBusiness", ["executive", "sla", "risk", "capacity"], "Non-technical dashboard for availability, uptime, security posture, incidents, SLA, AI recommendations and capacity forecast."),
+      item("ai-noc", "Plugin Architecture", "/ai-noc/plugin-architecture", "aiNoc.plugins.manage", "Puzzle", ["plugins", "vendors", "integrations"], "Isolated, versioned plugins for vendors, cloud networking, endpoint telemetry, DNS filtering, SIEM, ITSM and identity providers."),
+      item("ai-noc", "Integration API", "/ai-noc/integration-api", "aiNoc.integrations.manage", "Cable", ["api", "active directory", "siem", "itsm"], "Versioned, audited REST API for AD, Entra ID, LDAP, RADIUS, TACACS+, SIEM, ITSM, Teams, Slack and webhooks.")
+    ]
   },
   {
     title: "Router Management",
@@ -82,6 +108,32 @@ export const navigationGroups: NavigationGroup[] = [
       item("configuration-center", "Wireless / SSID", "/configuration-center/wireless-ssid", "configuration.view", "Wifi", ["wireless", "ssid", "capsman"], "Wireless, SSID and CAPsMAN configuration."),
       item("configuration-center", "VPN", "/configuration-center/vpn", "configuration.view", "LockKeyhole", ["vpn", "wireguard", "ipsec", "openvpn", "l2tp", "sstp"], "WireGuard, IPSec, OpenVPN, L2TP and SSTP configuration."),
       item("configuration-center", "QoS / Bandwidth", "/configuration-center/qos-bandwidth", "configuration.view", "Gauge", ["qos", "queues", "bandwidth"], "Queues, QoS and bandwidth management.")
+    ]
+  },
+  {
+    title: "Network Control Center",
+    module: "network-control-center",
+    icon: "Network",
+    permission: "networkControl.view",
+    items: [
+      item("network-control-center", "Network Control Dashboard", "/network-control-center/dashboard", "networkControl.view", "LayoutDashboard", ["bandwidth", "devices", "policy", "blocked attempts"], "Bandwidth, device, policy, social media, streaming and high-risk access overview."),
+      item("network-control-center", "Device Management", "/network-control-center/device-management", "networkControl.devices.manage", "MonitorSmartphone", ["devices", "mac", "ip", "dhcp", "bulk"], "Identify, assign, limit, block, schedule, quarantine and audit every network device."),
+      item("network-control-center", "Device Detail", "/network-control-center/device-detail", "networkControl.devices.manage", "FileSearch", ["device profile", "history", "firewall hits", "queue"], "Full device profile with IP/MAC history, DHCP leases, bandwidth history, domains, policy timeline, alerts and admin actions."),
+      item("network-control-center", "User Activity", "/network-control-center/user-activity", "networkControl.activity.view", "UserRoundSearch", ["visited domains", "activity", "dns", "policy"], "User and device activity with domains, category, policy, data consumed and allowed or blocked status."),
+      item("network-control-center", "Bandwidth Utilization", "/network-control-center/bandwidth-utilization", "networkControl.bandwidth.view", "ChartNoAxesCombined", ["traffic", "utilization", "download", "upload"], "Overall, per-device, per-user, per-department, site, interface and VLAN utilization."),
+      item("network-control-center", "Bandwidth Control", "/network-control-center/bandwidth-control", "networkControl.bandwidth.manage", "Gauge", ["simple queues", "queue tree", "pcq", "limits"], "Per-device, user, group, department, VLAN, guest, burst, priority and schedule-based bandwidth limits."),
+      item("network-control-center", "Access Policies", "/network-control-center/access-policies", "networkControl.policies.manage", "ShieldCheck", ["policy", "approval", "exceptions"], "Reusable access policies with websites, applications, bandwidth, schedules, exceptions and approvals."),
+      item("network-control-center", "Policy Management", "/network-control-center/policy-management", "networkControl.policies.manage", "ClipboardList", ["full access", "business only", "guest", "lunch"], "Reusable policies for full access, limited access, no social media, no streaming, guest, executive, IT and after-hours controls."),
+      item("network-control-center", "Website Control", "/network-control-center/website-control", "networkControl.website.manage", "GlobeLock", ["block domains", "allowlist", "deny list", "dns"], "Block, allow, categorize, import and schedule website/domain restrictions."),
+      item("network-control-center", "Application Control", "/network-control-center/application-control", "networkControl.applications.manage", "AppWindow", ["social media", "streaming", "gaming", "layer7"], "Manage social media, streaming, gaming, file sharing, messaging, remote access and unknown applications."),
+      item("network-control-center", "Social Media Control", "/network-control-center/social-media-control", "networkControl.applications.manage", "MessagesSquare", ["facebook", "youtube", "tiktok", "instagram"], "Control social media sites and applications using DNS, domains, address lists and firewall policy."),
+      item("network-control-center", "Time-Based Access", "/network-control-center/time-based-access", "networkControl.schedules.manage", "CalendarClock", ["schedule", "work hours", "lunch", "holiday"], "Daily, weekly, department, device, user, holiday, temporary and emergency access schedules."),
+      item("network-control-center", "Special Access Devices", "/network-control-center/special-access-devices", "networkControl.specialAccess.manage", "BadgeCheck", ["executive", "server", "cctv", "bypass"], "Approved bypass devices with reason, expiry, scope, approver and usage audit."),
+      item("network-control-center", "Firewall Configuration", "/network-control-center/firewall-configuration", "networkControl.firewall.manage", "Firewall", ["filter", "nat", "mangle", "address lists"], "Firewall filter, NAT, mangle, address lists, service ports, rule order, risk rating, AI recommendation, backup and approval workflow."),
+      item("network-control-center", "Bulk Device Actions", "/network-control-center/bulk-device-actions", "networkControl.bulkActions.manage", "ListChecks", ["bulk", "apply policy", "quarantine", "export"], "Bulk policy, bandwidth, block, allow, group, special access, quarantine and export workflows."),
+      item("network-control-center", "Policy Scheduler", "/network-control-center/policy-scheduler", "networkControl.schedules.manage", "Timer", ["scheduler", "policy", "override"], "Policy schedule timelines, overrides, emergency restores and conflict detection."),
+      item("network-control-center", "Activity Logs", "/network-control-center/activity-logs", "audit.view", "ScrollText", ["audit", "admin", "blocked", "rollback"], "Complete audit trail for discovery, policy, firewall, bandwidth, special access, AI and rollback events."),
+      item("network-control-center", "Usage Reports", "/network-control-center/usage-reports", "networkControl.reports.export", "FileBarChart", ["pdf", "excel", "csv", "websites"], "PDF, Excel and CSV reports for devices, bandwidth, usage, blocked attempts and visited domains.")
     ]
   },
   {
